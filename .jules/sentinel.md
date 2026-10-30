@@ -1,0 +1,4 @@
+## 2023-10-30 - Insecure File Permissions on Temporary Files and Storage
+**Vulnerability:** The application was writing sensitive system inventory JSON data to a predictable temporary file `.tmp` without explicit restrictive file permissions (relying on OS default umask) and the created output folders lacked restricted permissions. An attacker could potentially access this temporary file while it was being written or access the saved directory on a shared system.
+**Learning:** File creation defaults in Python might create globally readable files. Relying on default temporary file naming like `filepath.with_suffix('.tmp')` is insecure as the file is created with standard permissions and is predictable.
+**Prevention:** Always use `tempfile.mkstemp()` which creates files with `0o600` permissions (only owner can read/write). Additionally, lock down output directory permissions using `chmod(0o700)` if they are intended to hold sensitive data.
